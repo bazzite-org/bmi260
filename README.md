@@ -18,10 +18,28 @@ pikaur -S bmi260-dkms
 ```
 
 ## ❄️ NixOS 
-The `bmi260` driver has been packaged for NixOS here: https://github.com/Cryolitia/nur-packages/blob/master/modules/bmi260.nix
 
-Refer to [this commit](https://github.com/Cryolitia/nixos-config/commit/1ff4c1ea97313f59ee3cc051eb8481583033bdf0) 
-for adding it to your personal NixOS config.
+Using nix flakes support
+
+There is a NUR module maintained by [@Cryolitia](https://github.com/Cryolitia)
+```
+{
+  description = "NixOS configuration with flakes";
+  inputs.cryolitia-nur.url = "github:Cryolitia/nur-packages/master";
+
+  outputs = { self, nixpkgs, cryolitia-nur }: {
+    # replace <your-hostname> with your actual hostname
+    nixosConfigurations.<your-hostname> = nixpkgs.lib.nixosSystem {
+      # ...
+      modules = [
+        # ...
+        cryolitia-nur.nixosModules.bmi260
+        hardware.sensor.iio.bmi260.enable = true;
+      ];
+    };
+  };
+}
+```
 
 ## Other Distributions
 You can also install as a DKMS package manually if you are on Fedora or another distro.
@@ -45,4 +63,4 @@ sudo rm -r /usr/src/bmi260-0.0.1
 # License
 The driver in this repository is licensed under GPL-2.0-only, following the driver it is based on (for the Bosch 160). 
 
-The configuration blob that is uploaded to the BMI 260 is sourced from ChromeOS and licensed under BSD-3.
+The configuration blob that is uploaded to the BMI 260 is sourced from ChromeOS and licensed under BSD-3-Clause.
